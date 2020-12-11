@@ -1,6 +1,7 @@
 
 from tkinter import *
 from tkinter import messagebox as MessageBox
+from tkinter import ttk
 
 
 from proveedores import proveedor as modelo_proveedor
@@ -22,25 +23,29 @@ proveedor_label = Label(text='Proveedores')
 def ventanaProveedores():
     ventana_proveedores = Tk()
     ventana_proveedores.title('PROVEEDORES')
-    ventana_proveedores.geometry('300x350')
+    ventana_proveedores.geometry('700x550')
 
      
     
-    proveedores_box = Frame(ventana_proveedores, width=250)
-    proveedores_box.grid(row=1)
+    #proveedor_box = Frame(ventana_proveedores, width=250)
+    #Label(proveedores_box).grid(row=1)
+    proveedor_box = ttk.Treeview(height=8, columns=2)
+    proveedor_box.grid(row=1, column=0, columnspan=2)
+    proveedor_box.heading("#0", text='Nombre', anchor=W)
+    proveedor_box.heading("#1", text='Empresa', anchor=W)
 
     nombre1 = ""
     empresa = ""
 
-    proveedores_lista = []
+    
     provee = modelo_proveedor.Proveedor(nombre1, empresa)
     pro = provee.listar()
-    proveedores_lista.append(pro)
+    
     
 
     for proveedores in pro:                
-
-        Label(proveedores_box, text=(proveedores[1], proveedores[2])).grid()
+        proveedor_box.insert('', 0, text=proveedores[1], values=(proveedores[2], proveedores[3]))
+        #Label(proveedores_box, text=(proveedores[1], proveedores[2])).grid()
         #Label(proveedores_box, text=proveedores[2]).grid()
         
         
@@ -124,6 +129,9 @@ def venta():
     product_frame.grid_remove()
     boton_producto.grid_remove()
     boton_proveedor.grid_remove()
+    proveedor_box.grid_remove()
+    boton_mostrar_proveedor.grid_remove()
+    
     
 
 
@@ -150,21 +158,22 @@ product_price_entry = Entry(product_frame, textvariable=producto_precio_data)
 product_quantity_label = Label(product_frame, text='Cantidad')
 product_quantity_entry = Entry(product_frame, textvariable=producto_cantidad_data)
 
-boton_producto = Button(ventana, text='Guardar', command=ventanaProveedores)
+
 
 
 def registroProducto():       
 
-    proveedor_id = product_name_entry
+    proveedor_id = product_id_entry
     nombre = product_name_entry
-    nombre_empresa = proveedor_nombre_empresa_entry
+    precio = product_price_entry
+    cantidad = product_quantity_entry
     
     
-    if name_data.get() == "" or nombre_empresa_data.get() == "":         
+    if proveedor_id_data.get() == 0 or producto_nombre_data.get() == "" or producto_precio_data.get() == 0 or producto_cantidad_data.get() == 0:         
         MessageBox.showerror(message="El producto no se registro porque tiene un campo vacio" , title="ERROR" )
     else :
-        proveedor = modelo_proveedor.Proveedor(nombre.get(), nombre_empresa.get())
-        registro = proveedor.registrar()
+        producto = modelo_producto.Producto(proveedor_id.get(), nombre.get(), precio.get(), cantidad.get())
+        registro = producto.registrarProducto()
 
         if registro[0] >= 1:
             MessageBox.showinfo(message="Has registrado correctamente el producto " + str(registro[1].nombre), title="BIEN HECHO" )
@@ -174,8 +183,15 @@ def registroProducto():
 
         
 
-    name_data.set("")
-    nombre_empresa_data.set("")
+    proveedor_id_data.set(0)
+    producto_nombre_data.set("")
+    producto_precio_data.set(0)
+    producto_cantidad_data.set(0)
+
+
+boton_producto = Button(ventana, text='Guardar', command=registroProducto)
+
+
 
 
 def producto():
@@ -222,6 +238,8 @@ def producto():
     vent_frame.grid_remove()
     boton_venta.grid_remove()
     boton_proveedor.grid_remove()
+    proveedor_box.grid_remove()
+    boton_mostrar_proveedor.grid_remove()
     
     
 
@@ -280,22 +298,37 @@ def registroProveedor():
 #***************************************************************
 
 
+proveedor_box = ttk.Treeview(height=25, columns=2)
 def mostrarProveedores():
-        print(f"\nVale {usuario[1]} Aqui tienes tus notas: ")
+    
+    proveedor_box.grid(row=1, column=1, columnspan=2)
+    proveedor_box.heading("#0", text='Nombre', anchor=W)
+    proveedor_box.heading("#1", text='Empresa', anchor=W)
 
-        mostrar = proveedor.listar(usuario[0]) 
-        mostrar_proveedor = mostrar.listar()
+    nombre1 = ""
+    empresa = ""
 
-        for proveedor in mostrar:
-            print("************************************")
-            print(proveedor[2])
-            print(proveedor[3])
+    
+    provee = modelo_proveedor.Proveedor(nombre1, empresa)
+    pro = provee.listar()
+    
+    
+
+    for proveedores in pro:
+        proveedor_box.insert('', 0, text=proveedores[1], values=(proveedores[2], proveedores[3]))
+        
+                       
+        #Label(proveedores_box, text=(proveedores[1], proveedores[2])).grid()
+        #Label(proveedores_box, text=proveedores[2]).grid()
+        
+
+    
 
 
 
 # Boton para guardar
 boton_proveedor = Button(ventana, text='Guardar', command=registroProveedor)
-boton_mostrar_proveedor = Button(ventana, text='Listar', command=ventanaProveedores)
+boton_mostrar_proveedor = Button(ventana, text='Listar', command=mostrarProveedores)
 
 
 def proveedores():   
@@ -345,6 +378,8 @@ def proveedores():
     vent_frame.grid_remove()
     boton_venta.grid_remove()
     boton_producto.grid_remove()
+    
+    
    
 
 

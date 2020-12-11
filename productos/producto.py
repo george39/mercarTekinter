@@ -19,12 +19,12 @@ class Producto:
         
 
 
-    def registrar(self):
+    def registrarProducto(self):
         fecha = datetime.datetime.now()
 
         
-        sql = "INSERT INTO productos VALUES(null, %s, %s, %s, %s)"
-        producto = (self.proveedor_id, self.nombre, self.precio, self.cantidad)
+        sql = "INSERT INTO productos VALUES(null, %s, %s, %s, %s, %s)"
+        producto = (self.proveedor_id, self.nombre, self.precio, self.cantidad, fecha)
 
 
         try:
